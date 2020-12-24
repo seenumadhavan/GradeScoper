@@ -10,6 +10,9 @@
     <!--Add buttons to initiate auth sequence and sign out-->
     <button id="authorize_button" style="display: none;">Authorize</button>
     <button id="signout_button" style="display: none;">Sign Out</button>
+    <button id="create_calendar_button" style="display: none;">Create Calendar</button>
+    <button id="create_event_button" style="display: none;">Create Default Event</button>
+    <button id="list_events_button" style="display: none;">List Upcoming Events</button>
 
     <pre id="content" style="white-space: pre-wrap;"></pre>
 
@@ -24,10 +27,13 @@
 
       // Authorization scopes required by the API; multiple scopes can be
       // included, separated by spaces.
-      var SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
+      var SCOPES = "https://www.googleapis.com/auth/calendar";
 
       var authorizeButton = document.getElementById('authorize_button');
       var signoutButton = document.getElementById('signout_button');
+      var createCalendarButton = document.getElementById('create_calendar_button');
+      var createEventButton = document.getElementById('create_event_button');
+      var listEventsButton = document.getElementById('list_events_button');
 
       /**
        *  On load, called to load the auth2 library and API client library.
@@ -54,6 +60,9 @@
           updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
           authorizeButton.onclick = handleAuthClick;
           signoutButton.onclick = handleSignoutClick;
+          createCalendarButton.onclick = handleCreateCalendar;
+          createEventButton.onclick = create_event;
+          listEventsButton.onclick = listUpcomingEvents;
         }, function(error) {
           appendPre(JSON.stringify(error, null, 2));
         });
@@ -67,10 +76,20 @@
         if (isSignedIn) {
           authorizeButton.style.display = 'none';
           signoutButton.style.display = 'block';
-          listUpcomingEvents();
+          createCalendarButton.style.display = 'block';
+          createEventButton.style.display = 'block';
+          listEventsButton.style.display = 'block';
+
+          // INSERT DEFAULT FUNCTION CALLS HERE (WILL RUN UPON STARTUP)
+          // listUpcomingEvents();
+          // create_event();
+          // listUpcomingEvents();
         } else {
           authorizeButton.style.display = 'block';
           signoutButton.style.display = 'none';
+          createCalendarButton.style.display = 'none';
+          createEventButton.style.display = 'none';
+          listEventsButton.style.display = 'none';
         }
       }
 
@@ -105,9 +124,9 @@
        * the authorized user's calendar. If no events are found an
        * appropriate message is printed.
        */
-      function listUpcomingEvents() {
+      function listUpcomingEvents(event) {
         gapi.client.calendar.events.list({
-          'calendarId': 'primary',
+          'calendarId': 'n49s49rbh5c89594s9u55aoddc@group.calendar.google.com',
           'timeMin': (new Date()).toISOString(),
           'showDeleted': false,
           'singleEvents': true,
@@ -131,7 +150,66 @@
           }
         });
       }
+      
+      /*
+      Create event on call
+      */
+      function create_event(event) {
+        var event = {
+          'summary': 'Google I/O 2077',
+          'location': '800 Howard St., San Francisco, CA 94103',
+          'description': 'A chance to hear more about Google\'s developer products.',
+          'start': {
+            'dateTime': '2020-12-25T09:00:00-07:00',
+            'timeZone': 'America/Los_Angeles'
+          },
+          'end': {
+            'dateTime': '2020-12-25T17:00:00-07:00',
+            'timeZone': 'America/Los_Angeles'
+          },
+          'recurrence': [
+            'RRULE:FREQ=DAILY;COUNT=1'
+          ],
+          'reminders': {
+            'useDefault': false,
+            'overrides': [
+              {'method': 'email', 'minutes': 24 * 60},
+              {'method': 'popup', 'minutes': 10}
+            ]
+          }
+        };
 
+        var request = gapi.client.calendar.events.insert({
+          'calendarId': 'n49s49rbh5c89594s9u55aoddc@group.calendar.google.com',
+          'resource': event
+        });
+        request.execute(function(event) {
+          appendPre('Event created: ' + event.htmlLink);
+          console.log("event created");
+        });
+      }
+
+      /*Creates a calendar*/
+      function handleCreateCalendar(event) {
+        // return gapi.client.calendar.calendars.insert({
+        //   "resource": {
+        //     "summary": "GradeScoper"
+        //   }
+        // })
+        //   .then(function(response) {
+        //     // Handle the results here (response.result has the parsed body).
+        //     console.log("Response", response);
+        //   },
+        //   function(err) { console.error("Execute error", err); });
+
+        return gapi.client.calendar.calendarList.list({})
+          .then(function(response) {
+                  // Handle the results here (response.result has the parsed body).
+                  console.log("Response", response);
+                },
+                function(err) { console.error("Execute error", err); });
+      }
+        
     </script>
 
     <script async defer src="https://apis.google.com/js/api.js"
