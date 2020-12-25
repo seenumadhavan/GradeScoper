@@ -60,7 +60,7 @@
           updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
           authorizeButton.onclick = handleAuthClick;
           signoutButton.onclick = handleSignoutClick;
-          createCalendarButton.onclick = handleCreateCalendar;
+          // createCalendarButton.onclick = handleCreateCalendar;
           createEventButton.onclick = create_event;
           listEventsButton.onclick = listUpcomingEvents;
         }, function(error) {
@@ -84,6 +84,9 @@
           // listUpcomingEvents();
           // create_event();
           // listUpcomingEvents();
+          var gradescoperCalID = getGradescoperCalendar();
+          console.log(gradescoperCalID);
+
         } else {
           authorizeButton.style.display = 'block';
           signoutButton.style.display = 'none';
@@ -190,26 +193,64 @@
       }
 
       /*Creates a calendar*/
-      function handleCreateCalendar(event) {
-        // return gapi.client.calendar.calendars.insert({
-        //   "resource": {
-        //     "summary": "GradeScoper"
-        //   }
-        // })
-        //   .then(function(response) {
-        //     // Handle the results here (response.result has the parsed body).
-        //     console.log("Response", response);
-        //   },
-        //   function(err) { console.error("Execute error", err); });
-
-        return gapi.client.calendar.calendarList.list({})
+      function create_calendar() {
+        return gapi.client.calendar.calendars.insert({
+          "resource": {
+            "summary": "GradeScoper"
+          }
+        })
           .then(function(response) {
-                  // Handle the results here (response.result has the parsed body).
-                  console.log("Response", response);
-                },
-                function(err) { console.error("Execute error", err); });
+            // Handle the results here (response.result has the parsed body).
+            // console.log("Response", response);
+            console.log("created calendar");
+            return JSON.parse(response.body).id;
+          },
+          function(err) { console.error("Execute error", err); });
       }
+
+      // function to create calendar if doesn't exist, and ultimately return calendar ID (for future event creation)
+      async function getGradescoperCalendar() {
+        var response_raw;
+        var cal_id;
+        var cal_found = false;
+        const response = await gapi.client.calendar.calendarList.list({});
+        response_raw = response;
+        var cal_items = JSON.parse(response_raw.body).items;
+        // console.log(cal_found);
+        for (var i = 0; i < cal_items.length; i++) {
+          if (cal_items[i].summary == "GradeScoper") {
+            cal_id = cal_items[i].id;
+            console.log("found");
+            cal_found = true;
+          }
+        }
+        if (cal_found) return cal_id;
+        return create_calendar();
+      }
+
+        // pull 
+      //   return gapi.client.calendar.calendarList.list({})
+      //     .then(function(response) {
+      //             // Handle the results here (response.result has the parsed body).
+      //             // console.log("Response", response);
+      //             response_raw = response;
+      //             var cal_items = JSON.parse(response_raw.body).items;
+      //             // console.log(cal_found);
+      //             for (var i = 0; i < cal_items.length; i++) {
+      //               if (cal_items[i].summary == "GradeScoper") {
+      //                 cal_id = cal_items[i].id;
+      //                 console.log("found");
+      //                 cal_found = true;
+      //               }
+      //             }
+      //             if (cal_found) return cal_id;
+      //             return create_calendar();
+      //           },
+      //           function(err) { console.error("Execute error", err); });
+      //   // console.log(typeof(response_raw));
+      // }
         
+      
     </script>
 
     <script async defer src="https://apis.google.com/js/api.js"
