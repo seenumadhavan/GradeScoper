@@ -31,7 +31,7 @@
 
       var authorizeButton = document.getElementById('authorize_button');
       var signoutButton = document.getElementById('signout_button');
-      var createCalendarButton = document.getElementById('create_calendar_button');
+      //var createCalendarButton = document.getElementById('create_calendar_button');
       var createEventButton = document.getElementById('create_event_button');
       var listEventsButton = document.getElementById('list_events_button');
 
@@ -76,7 +76,7 @@
         if (isSignedIn) {
           authorizeButton.style.display = 'none';
           signoutButton.style.display = 'block';
-          createCalendarButton.style.display = 'block';
+          //createCalendarButton.style.display = 'block';
           createEventButton.style.display = 'block';
           listEventsButton.style.display = 'block';
 
@@ -84,13 +84,12 @@
           // listUpcomingEvents();
           // create_event();
           // listUpcomingEvents();
-          var gradescoperCalID = getGradescoperCalendar();
-          console.log(gradescoperCalID);
+          
 
         } else {
           authorizeButton.style.display = 'block';
           signoutButton.style.display = 'none';
-          createCalendarButton.style.display = 'none';
+          //createCalendarButton.style.display = 'none';
           createEventButton.style.display = 'none';
           listEventsButton.style.display = 'none';
         }
@@ -127,9 +126,11 @@
        * the authorized user's calendar. If no events are found an
        * appropriate message is printed.
        */
-      function listUpcomingEvents(event) {
+      async function listUpcomingEvents(event) {
+        var gradescoperCalID = await getGradescoperCalendar();
+        console.log(gradescoperCalID);
         gapi.client.calendar.events.list({
-          'calendarId': 'n49s49rbh5c89594s9u55aoddc@group.calendar.google.com',
+          'calendarId': gradescoperCalID,
           'timeMin': (new Date()).toISOString(),
           'showDeleted': false,
           'singleEvents': true,
@@ -157,17 +158,19 @@
       /*
       Create event on call
       */
-      function create_event(event) {
+      async function create_event(event) {
+        var gradescoperCalID = await getGradescoperCalendar();
+        console.log(gradescoperCalID);
         var event = {
           'summary': 'Google I/O 2077',
           'location': '800 Howard St., San Francisco, CA 94103',
           'description': 'A chance to hear more about Google\'s developer products.',
           'start': {
-            'dateTime': '2020-12-25T09:00:00-07:00',
+            'dateTime': '2020-12-26T09:00:00-07:00',
             'timeZone': 'America/Los_Angeles'
           },
           'end': {
-            'dateTime': '2020-12-25T17:00:00-07:00',
+            'dateTime': '2020-12-26T17:00:00-07:00',
             'timeZone': 'America/Los_Angeles'
           },
           'recurrence': [
@@ -183,7 +186,7 @@
         };
 
         var request = gapi.client.calendar.events.insert({
-          'calendarId': 'n49s49rbh5c89594s9u55aoddc@group.calendar.google.com',
+          'calendarId': gradescoperCalID,
           'resource': event
         });
         request.execute(function(event) {
@@ -209,46 +212,45 @@
       }
 
       // function to create calendar if doesn't exist, and ultimately return calendar ID (for future event creation)
-      async function getGradescoperCalendar() {
+      function getGradescoperCalendar() {
         var response_raw;
         var cal_id;
         var cal_found = false;
-        const response = await gapi.client.calendar.calendarList.list({});
-        response_raw = response;
-        var cal_items = JSON.parse(response_raw.body).items;
-        // console.log(cal_found);
-        for (var i = 0; i < cal_items.length; i++) {
-          if (cal_items[i].summary == "GradeScoper") {
-            cal_id = cal_items[i].id;
-            console.log("found");
-            cal_found = true;
-          }
-        }
-        if (cal_found) return cal_id;
-        return create_calendar();
-      }
-
-        // pull 
-      //   return gapi.client.calendar.calendarList.list({})
-      //     .then(function(response) {
-      //             // Handle the results here (response.result has the parsed body).
-      //             // console.log("Response", response);
-      //             response_raw = response;
-      //             var cal_items = JSON.parse(response_raw.body).items;
-      //             // console.log(cal_found);
-      //             for (var i = 0; i < cal_items.length; i++) {
-      //               if (cal_items[i].summary == "GradeScoper") {
-      //                 cal_id = cal_items[i].id;
-      //                 console.log("found");
-      //                 cal_found = true;
-      //               }
-      //             }
-      //             if (cal_found) return cal_id;
-      //             return create_calendar();
-      //           },
-      //           function(err) { console.error("Execute error", err); });
-      //   // console.log(typeof(response_raw));
+      //   const response = await gapi.client.calendar.calendarList.list({});
+      //   response_raw = response;
+      //   var cal_items = JSON.parse(response_raw.body).items;
+      //   // console.log(cal_found);
+      //   for (var i = 0; i < cal_items.length; i++) {
+      //     if (cal_items[i].summary == "GradeScoper") {
+      //       cal_id = cal_items[i].id;
+      //       console.log("found");
+      //       cal_found = true;
+      //     }
+      //   }
+      //   if (cal_found) return cal_id;
+      //   return create_calendar();
       // }
+
+        return gapi.client.calendar.calendarList.list({})
+          .then(function(response) {
+                  // Handle the results here (response.result has the parsed body).
+                  // console.log("Response", response);
+                  response_raw = response;
+                  var cal_items = JSON.parse(response_raw.body).items;
+                  // console.log(cal_found);
+                  for (var i = 0; i < cal_items.length; i++) {
+                    if (cal_items[i].summary == "GradeScoper") {
+                      cal_id = cal_items[i].id;
+                      console.log("found");
+                      cal_found = true;
+                    }
+                  }
+                  if (cal_found) return cal_id;
+                  return create_calendar();
+                },
+                function(err) { console.error("Execute error", err); });
+        // console.log(typeof(response_raw));
+      }
         
       
     </script>
