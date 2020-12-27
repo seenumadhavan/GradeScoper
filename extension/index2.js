@@ -19,7 +19,7 @@ var listEventsButton = document.getElementById('list_events_button');
 /**
  *  On load, called to load the auth2 library and API client library.
  */
-function handleClientLoad() {
+export function handleClientLoad() {
 gapi.load('client:auth2', initClient);
 }
 

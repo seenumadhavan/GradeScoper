@@ -2,6 +2,10 @@
   "manifest_version": 2,
 
   "name": "Gradescoper",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
   "content_scripts": [{
     "js": ["index2.js"],
     "matches": ["http://*/*", "https://*/*"]
@@ -9,8 +13,7 @@
   "version": "1.0",
 
   "browser_action": {
-    "default_icon": "gs.jpg",
-    "default_popup": "index2.html"
+    "default_popup": "index.html"
   },
   "permissions": [
     "activeTab"
