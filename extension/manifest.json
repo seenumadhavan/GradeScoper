@@ -2,21 +2,28 @@
   "manifest_version": 2,
 
   "name": "Gradescoper",
-  "background": {
-    "scripts": ["background.js"],
-    "persistent": false
-  },
-  "content_scripts": [{
-    "js": ["index2.js"],
-    "matches": ["http://*/*", "https://*/*"]
-  }],
+  
   "version": "1.0",
 
   "browser_action": {
-    "default_popup": "index.html"
+    "default_title": "GAPI"
   },
+
+  "background" : {
+    "page" : "background.html",
+    "persistent": false
+  },
+
+  
   "permissions": [
-    "activeTab"
+    "activeTab", "https://apis.google.com/*", "identity"
   ],
-  "content_security_policy": "script-src 'self' https://apis.google.com/js/api.js; object-src 'self'"
+
+  "oauth2" : {
+    "client_id" : "1022143948638-summ8v5j6gv01njsturknvn6opm21ooc.apps.googleusercontent.com",
+    "scopes" : ["https://www.googleapis.com/auth/calendar"]
+  },
+
+  "content_security_policy": "script-src 'self' https://apis.google.com/; object-src 'self'",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAu9lnWoNpQgdDdAbNGrvTDAH5Uj2xJzJrwWID2zeJodhSHG+2UIdwuqjMIvoVNCp2qBe36c8WV9H4Qg43h3OvJFsZDchJwc7P2sQr1mDjepcoOtivVJbAJwdOo/gIIbCXPlD47w//Mrku3YWCmaF3wyRq5uTZfRZBq7eSu6sy5Tez/QZdpf8zM8meMiyrjb0kAgxJmuJRilJbhnfDWAM1fSVvZUd100VhYx2dtkYuE9z9FhGFHxCxy98KJSL3AYAK9vhVcubaDeU8oTNUeSsPB4TMdMiq+dIJDFHBdfLZG5biYKOFXcSbCOucCcqkh8W38WHBT+0CNxrWLoESExNqawIDAQAB"
 }

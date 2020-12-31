@@ -1,3 +1,4 @@
+
 // Client ID and API key from the Developer Console
 //var CLIENT_ID = '1022143948638-summ8v5j6gv01njsturknvn6opm21ooc.apps.googleusercontent.com';
 var CLIENT_ID = '1022143948638-71r875hpsahco2atmtfllnd3cvnadlmp.apps.googleusercontent.com';
@@ -16,12 +17,16 @@ var signoutButton = document.getElementById('signout_button');
 var createEventButton = document.getElementById('create_event_button');
 var listEventsButton = document.getElementById('list_events_button');
 
+// document.addEventListener('DOMContentLoaded', function () {
+//     console.log("hi");
+//     handleClientLoad();      
+// });
 /**
  *  On load, called to load the auth2 library and API client library.
  */
-export function handleClientLoad() {
-gapi.load('client:auth2', initClient);
-}
+// function handleClientLoad() {
+// gapi.load('client:auth2', initClient);
+// }
 
 /**
  *  Initializes the API client library and sets up sign-in state
