@@ -1,6 +1,9 @@
+var myToken = "";
+
 console.log("hello");
 chrome.identity.getAuthToken({interactive: true}, function(token) {
     console.log('got the token', token);
+    myToken = token;
   })
 
 var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
@@ -12,7 +15,10 @@ function onGAPILoad() {
         apiKey: API_KEY,
         discoveryDocs: DISCOVERY_DOCS,
     }).then(function () {
-        console.log('gapi initialized')
+        console.log('gapi initialized');
+        gapi.auth.setToken({
+            'access_token': myToken,
+          });
     }, function(error) {
         console.log('error', error)
     });

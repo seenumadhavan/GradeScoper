@@ -5,6 +5,15 @@
   </head>
   <body>
     <h1>GradeScoper</h1>
-    <button id="checkPage">Update Calendar Now!</button>
+    <button id="authorize_button" style="display: block;">Authorize</button>
+    <button id="signout_button" style="display: none;">Sign Out</button>
+    <button id="create_calendar_button" style="display: none;">Create Calendar</button>
+    <button id="create_event_button" style="display: none;">Create Default Event</button>
+    <button id="list_events_button" style="display: none;">List Upcoming Events</button>
+    <input type="text" id="mytext">
+
+    <script type="text/javascript" src="popup.js"></script>
+    <script src="https://apis.google.com/js/client.js?onload=onGAPILoad"></script>
+
   </body>
 </html>

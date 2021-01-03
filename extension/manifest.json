@@ -6,7 +6,8 @@
   "version": "1.0",
 
   "browser_action": {
-    "default_title": "GAPI"
+    "default_title": "GAPI",
+    "default_popup": "popup.html"
   },
 
   "background" : {
@@ -16,7 +17,7 @@
 
   
   "permissions": [
-    "activeTab", "https://apis.google.com/*", "identity"
+    "activeTab", "https://apis.google.com/*", "identity",  "identity.email"
   ],
 
   "oauth2" : {
