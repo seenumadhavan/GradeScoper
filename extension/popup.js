@@ -3,6 +3,7 @@ var signoutButton = document.getElementById('signout_button');
 //var createCalendarButton = document.getElementById('create_calendar_button');
 var createEventButton = document.getElementById('create_event_button');
 var listEventsButton = document.getElementById('list_events_button');
+var scrapeButton = document.getElementById('scrape_button');
 
 var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
 var API_KEY = 'AIzaSyAB-EKRa9es0KscUhWe4F5jwi4-KSumdSM';
@@ -37,6 +38,9 @@ function onGAPILoad() {
         console.log('gapi initialized');
         createEventButton.onclick = create_event;
         createEventButton.style.display = 'block';
+        scrapeButton.style.display = 'block';
+        scrapeButton.onclick = scrape_click;
+
     }, function(error) {
         console.log('error', error)
     });
@@ -47,6 +51,16 @@ function appendPre(message) {
     var textContent = document.createTextNode(message + '\n');
     pre.appendChild(textContent);
 }
+
+async function scrape_click(event) {
+    console.log("scrape clicked");
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, {greeting: "time to scrape"}, function(response) {
+          console.log(response.farewell);
+        });
+      });
+  }
+
 
 async function create_event(event) {
     //var gradescoperCalID = await getGradescoperCalendar();

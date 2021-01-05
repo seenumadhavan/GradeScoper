@@ -15,6 +15,12 @@
     "persistent": false
   },
 
+  "content_scripts": [
+    {
+      "matches": ["https://www.gradescope.com/*"],
+      "js": ["scrape.js"]
+    }
+  ],
   
   "permissions": [
     "activeTab", "https://apis.google.com/*", "identity",  "identity.email"
