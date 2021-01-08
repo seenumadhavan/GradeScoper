@@ -14,8 +14,6 @@ chrome.runtime.onMessage.addListener(
               console.log(matches);
 
               sendResponse({farewell: matches});
-
-          
             })()
 
           // })

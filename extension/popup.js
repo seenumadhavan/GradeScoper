@@ -63,8 +63,8 @@ async function scrape_click(event) {
 
 async function scrape_click_noListen() {
     console.log("scrape clicked");
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, {greeting: "time to scrape"}, function(response) {
+    chrome.tabs.query({active: true, currentWindow: true}, async function(tabs) {
+        await chrome.tabs.sendMessage(tabs[0].id, {greeting: "time to scrape"}, function(response) {
           console.log(response.farewell);
           return response.farewell;
         });
@@ -80,47 +80,48 @@ async function create_event(event) {
           'access_token': token,
         });
         //gapi.auth2.getAuthInstance().signIn();
+            
+        console.log("scrape clicked");
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, {greeting: "time to scrape"}, async function(response) {
+              console.log(response.farewell);
+              var arrayScraped = response.farewell;
+              var gradescoperCalID = await getGradescoperCalendar();
 
-        console.log("85");
-        var arrayScraped = await scrape_click_noListen();
-        console.log(arrayScraped);
-        var gradescoperCalID = await getGradescoperCalendar();
-        console.log(gradescoperCalID);
-        var event = {
-            'summary': arrayScraped[3],
-            'location': '800 Howard St., San Francisco, CA 94103',
-            'description': 'A chance to hear more about Google\'s developer products.',
-            'start': {
-            'dateTime': '2021-01-05T09:00:00-07:00',
-            'timeZone': 'America/Los_Angeles'
-            },
-            'end': {
-            'dateTime': '2021-01-05T17:00:00-07:00',
-            'timeZone': 'America/Los_Angeles'
-            },
-            'recurrence': [
-            'RRULE:FREQ=DAILY;COUNT=1'
-            ],
-            'reminders': {
-            'useDefault': false,
-            'overrides': [
-                {'method': 'email', 'minutes': 24 * 60},
-                {'method': 'popup', 'minutes': 10}
-            ]
-            }
-        };
+              var event = {
+                'summary': arrayScraped[3][1],
+                'location': '800 Howard St., San Francisco, CA 94103',
+                'description': 'A chance to hear more about Google\'s developer products.',
+                'start': {
+                'dateTime': '2021-01-05T09:00:00-07:00',
+                'timeZone': 'America/Los_Angeles'
+                },
+                'end': {
+                'dateTime': '2021-01-05T17:00:00-07:00',
+                'timeZone': 'America/Los_Angeles'
+                },
+                'recurrence': [
+                'RRULE:FREQ=DAILY;COUNT=1'
+                ],
+                'reminders': {
+                'useDefault': false,
+                'overrides': [
+                    {'method': 'email', 'minutes': 24 * 60},
+                    {'method': 'popup', 'minutes': 10}
+                ]
+                }
+                };
 
-        
-
-        var request = gapi.client.calendar.events.insert({
-            'calendarId': gradescoperCalID,
-            'resource': event
+                var request = gapi.client.calendar.events.insert({
+                    'calendarId': gradescoperCalID,
+                    'resource': event
+                });
+                request.execute(function(event) {
+                    // appendPre('Event created: ' + event.htmlLink);
+                    console.log(event);
+                });
+            });
         });
-        request.execute(function(event) {
-            // appendPre('Event created: ' + event.htmlLink);
-            console.log(event);
-        });
-
     });
 }
 
