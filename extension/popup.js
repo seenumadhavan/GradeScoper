@@ -88,42 +88,54 @@ async function create_event(event) {
               var arrayScraped = response.farewell;
               var gradescoperCalID = await getGradescoperCalendar();
 
-              var event = {
-                'summary': arrayScraped[3][1],
-                'location': '800 Howard St., San Francisco, CA 94103',
-                'description': 'A chance to hear more about Google\'s developer products.',
-                'start': {
-                'dateTime': '2021-01-05T09:00:00-07:00',
-                'timeZone': 'America/Los_Angeles'
-                },
-                'end': {
-                'dateTime': '2021-01-05T17:00:00-07:00',
-                'timeZone': 'America/Los_Angeles'
-                },
-                'recurrence': [
-                'RRULE:FREQ=DAILY;COUNT=1'
-                ],
-                'reminders': {
-                'useDefault': false,
-                'overrides': [
-                    {'method': 'email', 'minutes': 24 * 60},
-                    {'method': 'popup', 'minutes': 10}
-                ]
+              for (i = 0; i < arrayScraped[1].length; i++){
+                var name = arrayScraped[1][i][1];
+                if (name == null){
+                    name = arrayScraped[1][i][2];
                 }
-                };
+                name = arrayScraped[0][0][1] + ": " + name;
+                console.log(name);
+                var event = {
+                    'summary': name,
+                    'location': '800 Howard St., San Francisco, CA 94103',
+                    'description': 'A chance to hear more about Google\'s developer products.',
+                    'start': {
+                    'dateTime': '2021-01-05T09:00:00-07:00',
+                    'timeZone': 'America/Los_Angeles'
+                    },
+                    'end': {
+                    'dateTime': '2021-01-05T17:00:00-07:00',
+                    'timeZone': 'America/Los_Angeles'
+                    },
+                    'recurrence': [
+                    'RRULE:FREQ=DAILY;COUNT=1'
+                    ],
+                    'reminders': {
+                    'useDefault': false,
+                    'overrides': [
+                        {'method': 'email', 'minutes': 24 * 60},
+                        {'method': 'popup', 'minutes': 10}
+                    ]
+                    }
+                    };
+    
+                    var request = gapi.client.calendar.events.insert({
+                        'calendarId': gradescoperCalID,
+                        'resource': event
+                    });
+                    request.execute(function(event) {
+                        // appendPre('Event created: ' + event.htmlLink);
+                        console.log(event);
+                    });
+                    await new Promise(r => setTimeout(r, 1000));
+              }
 
-                var request = gapi.client.calendar.events.insert({
-                    'calendarId': gradescoperCalID,
-                    'resource': event
-                });
-                request.execute(function(event) {
-                    // appendPre('Event created: ' + event.htmlLink);
-                    console.log(event);
-                });
+              
             });
         });
     });
 }
+
 
 /*Creates a calendar*/
 function create_calendar() {

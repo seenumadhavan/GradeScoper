@@ -13,7 +13,7 @@ chrome.runtime.onMessage.addListener(
               let matches = Array.from(matchesIterator);
               console.log(matches);
 
-              sendResponse({farewell: matches});
+              sendResponse({farewell: [courseName, matches]});
             })()
 
           // })
