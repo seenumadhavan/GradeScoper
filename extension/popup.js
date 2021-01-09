@@ -87,7 +87,7 @@ async function create_event(event) {
               console.log(response.farewell);
               var arrayScraped = response.farewell;
               var gradescoperCalID = await getGradescoperCalendar();
-
+              var events = [];  
               for (i = 0; i < arrayScraped[1].length; i++){
                 var name = arrayScraped[1][i][1];
                 if (name == null){
@@ -119,17 +119,32 @@ async function create_event(event) {
                     ]
                     }
                     };
+                    events.push(event);
     
-                    var request = gapi.client.calendar.events.insert({
-                        'calendarId': gradescoperCalID,
-                        'resource': event
-                    });
-                    request.execute(function(event) {
-                        // appendPre('Event created: ' + event.htmlLink);
-                        console.log(event);
-                    });
-                    await new Promise(r => setTimeout(r, 500));
+                    // var request = gapi.client.calendar.events.insert({
+                    //     'calendarId': gradescoperCalID,
+                    //     'resource': event
+                    // });
+                    // request.execute(function(event) {
+                    //     // appendPre('Event created: ' + event.htmlLink);
+                    //     console.log(event);
+                    // });
+                    // await new Promise(r => setTimeout(r, 500));
               }
+              const batch = gapi.client.newBatch();
+              //var num_events= 0;
+              events.map((r, j) => {
+                  //num_events = num_events+1;
+                batch.add(gapi.client.calendar.events.insert({
+                  'calendarId': gradescoperCalID,
+                  'resource': events[j]
+                }))
+              })
+              batch.then(function(){
+                console.log('all jobs now dynamically done!!!');
+                //console.log(num_events);
+              });
+
 
               
             });
