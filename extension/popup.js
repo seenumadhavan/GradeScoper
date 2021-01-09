@@ -95,16 +95,17 @@ async function create_event(event) {
                 }
                 name = arrayScraped[0][0][1] + ": " + name;
                 console.log(name);
+
+                var endDate = getUTCEndFromComponents(arrayScraped[1][i][3], parseInt(arrayScraped[1][i][4]), parseInt(arrayScraped[1][i][5]), parseInt(arrayScraped[1][i][6]), arrayScraped[1][i][7]);
                 var event = {
                     'summary': name,
-                    'location': '800 Howard St., San Francisco, CA 94103',
-                    'description': 'A chance to hear more about Google\'s developer products.',
+                    'description': 'A Gradescoped Assignment',
                     'start': {
-                    'dateTime': '2021-01-05T09:00:00-07:00',
+                    'dateTime': endDate,
                     'timeZone': 'America/Los_Angeles'
                     },
                     'end': {
-                    'dateTime': '2021-01-05T17:00:00-07:00',
+                    'dateTime': endDate,
                     'timeZone': 'America/Los_Angeles'
                     },
                     'recurrence': [
@@ -127,13 +128,86 @@ async function create_event(event) {
                         // appendPre('Event created: ' + event.htmlLink);
                         console.log(event);
                     });
-                    await new Promise(r => setTimeout(r, 1000));
+                    await new Promise(r => setTimeout(r, 500));
               }
 
               
             });
         });
     });
+}
+
+
+// Please dont ask me how this works
+function getUTCEndFromComponents(month, date, hours, mins, ampm){
+    //month str, date int, hours int, mins int, ampm str
+
+
+
+    //var year = new Date().getFullYear;
+    var year = 2020
+    var result = "";
+
+    //year
+    result += year + "-";
+
+
+    //month
+    if (month == "January"){
+        result += "01-";
+    } else if (month == "February"){
+        result += "02-";
+    } else if (month == "March"){
+        result += "03-";
+    } else if (month == "April"){
+        result += "04-";
+    } else if (month == "May"){
+        result += "05-";
+    } else if (month == "June"){
+        result += "06-";
+    } else if (month == "July"){
+        result += "07-";
+    } else if (month == "August"){
+        result += "08-";
+    } else if (month == "September"){
+        result += "09-";
+    } else if (month == "October"){
+        result += "10-";
+    } else if (month == "November"){
+        result += "11-";
+    } else if (month == "December"){
+        result += "12-";
+    }
+
+
+    //date
+    if (date < 10){
+        result += "0" + date + "T";
+    } else{
+        result += date + "T";
+    }
+
+
+    //hours
+    if(ampm == "PM"){
+        hours += 12;
+    }
+
+    if (hours < 10){
+        result += "0" + hours + ":";
+    } else {
+        result += hours + ":";
+    }
+
+    //mins
+
+    if (mins < 10){
+        result += "0" + mins + ":00-07:00";
+    } else {
+        result += mins + ":00-07:00";
+    }
+    console.log(result);
+    return result;
 }
 
 
