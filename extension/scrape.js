@@ -7,7 +7,7 @@ chrome.runtime.onMessage.addListener(
             (() => {
               const text = document.documentElement.innerHTML;
               const matchesIterator = [...text.matchAll(/(?:scope=\"row\"><a aria-label(?:.+?)(?=>)>(.+?)(?=<\/a>)|scope=\"row\">(.+?)(?=<\/th))(?:(?!Due\s+at).)*Due\s+at\s+([^\s]+)\s+([0-3][0-9])\s+at\s+(\d?\d):(\d\d)(AM|PM)/g)];
-              const courseName = [...text.matchAll(/(?:.+?)(?=courseHeader--title)courseHeader--title\">(.+?)(?=<)/g)];
+              const courseName = [...text.matchAll(/(?:.+?)(?=courseHeader--title)courseHeader--title\">(.+?)(?=<)(?:.+?)(?=courseHeader--term)courseHeader--term\">(.+?)(?=\s)\s(.+?)(?=<)/g)];
               console.log(courseName);
               //console.log(text.match(/<a aria-label=\"View ([^\"]+)(?:(?!Due at).)*Due at ([^\s]+) ([0-3][0-9]) at (\d\d:\d\d)(AM|PM)/));
               let matches = Array.from(matchesIterator);

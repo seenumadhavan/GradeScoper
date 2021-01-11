@@ -98,7 +98,7 @@ async function create_event(event) {
                 name = arrayScraped[0][0][1] + ": " + name;
                 console.log(name);
 
-                var endDate = getUTCEndFromComponents(arrayScraped[1][i][3], parseInt(arrayScraped[1][i][4]), parseInt(arrayScraped[1][i][5]), parseInt(arrayScraped[1][i][6]), arrayScraped[1][i][7]);
+                var endDate = getUTCEndFromComponents(parseInt(arrayScraped[0][0][3]), arrayScraped[1][i][3], parseInt(arrayScraped[1][i][4]), parseInt(arrayScraped[1][i][5]), parseInt(arrayScraped[1][i][6]), arrayScraped[1][i][7]);
                 console.log("End date "+endDate.toString());
                 var event = {
                     'summary': name,
@@ -156,7 +156,7 @@ async function create_event(event) {
 
 
 // Please dont ask me how this works
-function getUTCEndFromComponents(month, date_input, hours, mins, ampm){
+function getUTCEndFromComponents(year, month, date_input, hours, mins, ampm){
     //month str, date int, hours int, mins int, ampm str
 
 
@@ -164,9 +164,8 @@ function getUTCEndFromComponents(month, date_input, hours, mins, ampm){
     //var year = new Date().getFullYear;
     var date = new Date();
 
-    date.setFullYear(2020);
+    date.setFullYear(year);
 
-    var year = 2020;
     var result = "";
 
     //year
@@ -219,7 +218,7 @@ function getUTCEndFromComponents(month, date_input, hours, mins, ampm){
     // } else{
     //     result += date_input + "T";
     // }
-
+    date.setSeconds(0);
     date.setMinutes(mins);
     date.setHours(hours);
     if (ampm == "PM") {
