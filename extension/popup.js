@@ -252,10 +252,15 @@ function getUTCEndFromComponents(year, month, date_input, hours, mins, ampm){
 
 
 /*Creates a calendar*/
-function create_calendar() {
+async function create_calendar() {
+    console.log("in create_calendar");
+    timezone = await getPrimaryCalendarTimezone();
+    console.log(timezone);
+
     return gapi.client.calendar.calendars.insert({
         "resource": {
-        "summary": "GradeScoper"
+        "summary": "GradeScoper",
+        "timeZone": timezone
         }
     })
         .then(function(response) {
@@ -292,6 +297,32 @@ function getGradescoperCalendar() {
                 }
                 if (cal_found) return cal_id;
                 return create_calendar();
+            },
+            function(err) { console.error("Execute error", err); });
+    // console.log(typeof(response_raw));
+}
+
+function getPrimaryCalendarTimezone() {
+    var response_raw;
+    var timezone;
+    var cal_found = false;
+
+
+    return gapi.client.calendar.calendarList.list({})
+        .then(function(response) {
+                // Handle the results here (response.result has the parsed body).
+                // console.log("Response", response);
+                response_raw = response;
+                var cal_items = JSON.parse(response_raw.body).items;
+                console.log(cal_items);
+                for (var i = 0; i < cal_items.length; i++) {
+                if (cal_items[i].primary == true) {
+                    timezone = cal_items[i].timeZone;
+                    console.log("found");
+                    cal_found = true;
+                }
+                }
+                if (cal_found) return timezone;
             },
             function(err) { console.error("Execute error", err); });
     // console.log(typeof(response_raw));
