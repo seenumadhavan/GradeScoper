@@ -89,16 +89,20 @@ async function create_event(event) {
               console.log(response.farewell);
               var arrayScraped = response.farewell;
               var gradescoperCalID = await getGradescoperCalendar();
-              var events = [];  
+              var events = []; 
               for (i = 0; i < arrayScraped[1].length; i++){
                 var name = arrayScraped[1][i][1];
                 if (name == null){
                     name = arrayScraped[1][i][2];
                 }
                 name = arrayScraped[0][0][1] + ": " + name;
-                console.log(name);
+                console.log("Name "+name);
 
                 var endDate = getUTCEndFromComponents(parseInt(arrayScraped[0][0][3]), arrayScraped[1][i][3], parseInt(arrayScraped[1][i][4]), parseInt(arrayScraped[1][i][5]), parseInt(arrayScraped[1][i][6]), arrayScraped[1][i][7]);
+                if (endDate==null) {
+                    console.log("invalid date");
+                    continue;
+                }
                 console.log("End date "+endDate.toString());
                 var event = {
                     'summary': name,
@@ -130,6 +134,7 @@ async function create_event(event) {
                     // await new Promise(r => setTimeout(r, 500));
               }
               var total = events.length;
+              if (total==0) return;
               const batch = gapi.client.newBatch();
               //var num_events= 0;
               events.map((r, j) => {
@@ -158,8 +163,7 @@ async function create_event(event) {
 // Please dont ask me how this works
 function getUTCEndFromComponents(year, month, date_input, hours, mins, ampm){
     //month str, date int, hours int, mins int, ampm str
-
-
+    console.log("Month"+month);
 
     //var year = new Date().getFullYear;
     var date = new Date();
