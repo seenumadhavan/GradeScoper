@@ -89,10 +89,11 @@ async function create_event(event) {
               console.log(response.farewell);
               var arrayScraped = response.farewell;
               var gradescoperCalID = await getGradescoperCalendar();
-              var events_obj = {
-                  events: []
-              }
-              
+            //   var events_obj = {
+            //       events: []
+            //   }
+
+              var events = [];
               for (i = 0; i < arrayScraped[1].length; i++){
                 var name = arrayScraped[1][i][1];
                 if (name == null){
@@ -141,7 +142,8 @@ async function create_event(event) {
 
                 // }
 
-                await checkSetKey(name, events_obj, event);
+                //await checkSetKey(name, events_obj, event);
+                events.push(event);
                     
     
                     // var request = gapi.client.calendar.events.insert({
@@ -154,11 +156,11 @@ async function create_event(event) {
                     // });
                     // await new Promise(r => setTimeout(r, 500));
               }
-              var total = events_obj.events.length;
+              var total = events.length;
               if (total==0) return;
               const batch = gapi.client.newBatch();
               //var num_events= 0;
-              events_obj.events.map((r, j) => {
+              events.map((r, j) => {
                   //num_events = num_events+1;
                   loading = loading +1;
                   document.getElementById("mytext").value = "loading"+(100*loading/total).toString()+"%";
