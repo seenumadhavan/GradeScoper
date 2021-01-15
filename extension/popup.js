@@ -89,7 +89,10 @@ async function create_event(event) {
               console.log(response.farewell);
               var arrayScraped = response.farewell;
               var gradescoperCalID = await getGradescoperCalendar();
-              var events = []; 
+              var events_obj = {
+                  events: []
+              }
+              
               for (i = 0; i < arrayScraped[1].length; i++){
                 var name = arrayScraped[1][i][1];
                 if (name == null){
@@ -120,8 +123,26 @@ async function create_event(event) {
                         {'method': 'popup', 'minutes': 10}
                     ]
                     }
-                    };
-                    events.push(event);
+                };
+
+                // check if event is in storage
+                // var nameFromMem = await chrome.storage.sync.get([name], async function(result) {
+                //     await console.log('Looking up: ' + name);
+                //     });
+                //console.log("name "+nameFromMem);
+
+                //var nameFromMem = await checkKey(name);
+
+                // add the event to storage if not in storage
+                // if (nameFromMem==null) {
+                //     console.log("Name and event pulled from memmory (rehydrated): " + nameFromMem+ " "+name);
+                //     await setKey(name);
+                //     events.push(event);
+
+                // }
+
+                await checkSetKey(name, events_obj, event);
+                    
     
                     // var request = gapi.client.calendar.events.insert({
                     //     'calendarId': gradescoperCalID,
@@ -133,11 +154,11 @@ async function create_event(event) {
                     // });
                     // await new Promise(r => setTimeout(r, 500));
               }
-              var total = events.length;
+              var total = events_obj.events.length;
               if (total==0) return;
               const batch = gapi.client.newBatch();
               //var num_events= 0;
-              events.map((r, j) => {
+              events_obj.events.map((r, j) => {
                   //num_events = num_events+1;
                   loading = loading +1;
                   document.getElementById("mytext").value = "loading"+(100*loading/total).toString()+"%";
@@ -159,6 +180,30 @@ async function create_event(event) {
     });
 }
 
+function checkKey(name) {
+    return chrome.storage.sync.get(name, function(result) {
+        console.log('Looking up: ' + name);
+        console.log('Found: ' + result);
+        });
+}
+function setKey(name) {
+    chrome.storage.sync.set({name: name}, async function() {
+        console.log('Logged into memory:' + name);
+    });
+}
+function checkSetKey(name, events_obj, event) {
+    return chrome.storage.sync.get(name, function(result) {
+        console.log('Looking up: ' + name);
+        console.log('Found: ' + result);
+        if (result==null){
+            chrome.storage.sync.set({name: name}, function() {
+                console.log('Logged into memory:' + name);
+                events_obj.events.push(event);
+            });
+        }
+        
+    });
+}
 
 // Please dont ask me how this works
 function getUTCEndFromComponents(year, month, date_input, hours, mins, ampm){

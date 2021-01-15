@@ -23,7 +23,7 @@
   ],
   
   "permissions": [
-    "activeTab", "https://apis.google.com/*", "identity",  "identity.email"
+    "activeTab", "https://apis.google.com/*", "identity",  "identity.email", "storage"
   ],
 
   "oauth2" : {
