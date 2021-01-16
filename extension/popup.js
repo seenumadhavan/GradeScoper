@@ -74,15 +74,35 @@ async function scrape_click_noListen() {
 
 async function create_event(event) {
     //var gradescoperCalID = await getGradescoperCalendar();
+
+    // var obj = {};
+    // obj['u'] = 'user';
+    // //console.log(obj);
+    // var u = 'u';
+
+    // chrome.storage.local.set(obj, function() {
+    //     chrome.storage.local.get(u, function (result) {
+    //         console.log("values " + String(result));
+    //         console.log(Object.keys(result));
+    //         console.log(Object.values(result));
+    //     });
+    // });
+    // return;
     var loading = 0;
     document.getElementById("mytext").value = "loading 0%";
+    
     chrome.identity.getAuthToken({interactive: true}, async function(token) {
         // Set GAPI auth token
         gapi.auth.setToken({
           'access_token': token,
         });
         //gapi.auth2.getAuthInstance().signIn();
-            
+        // chrome.storage.sync.set(obj, function() {
+        //     chrome.storage.sync.get('user', function (result) {
+        //         console.log("values");
+        //         console.log(result.values);
+        //     });
+        // });
         console.log("scrape clicked");
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             chrome.tabs.sendMessage(tabs[0].id, {greeting: "time to scrape"}, async function(response) {
@@ -145,34 +165,42 @@ async function create_event(event) {
                 //await checkSetKey(name, events_obj, event);
                 let curr = await function () {
                     return new Promise((resolve, reject) => {
-                        chrome.storage.sync.get(name, async function(result) {
-                            console.log("entered" + result.value);
-                            if (result.value == undefined) {
+                        chrome.storage.sync.get(name, function(result) {
+                            console.log(Object.entries(result));
+                            if (Object.values(result).length == 0) {
                                 //console.log("Event not found: "+name);
                                 events.push(event);
                                 console.log("pushed "+name);
-                                // chrome.storage.sync.set({name: name},  function() {
-                                //     console.log('Logged into memory:' + name);
-                                // });
-                                let c1 = await function () {
-                                    return new Promise((resolve, reject) => {
-                                        chrome.storage.sync.set({"myKey": "testPrefs"},function(){
-                                            chrome.storage.sync.get(["myKey"], function(result){
-                                                console.log(result.value);
-                                            })
-                                            resolve();
-                                        });
-                                    });
-                                }().then(response => {
-                                }).catch(e => {
-                                    console.log(e);
+                                chrome.storage.sync.set({name: name},  function() {
+                                    console.log('Logged into memory:' + name);
                                 });
-                                    chrome.storage.sync.set({"myKey": "testPrefs"},function(){
-                                    chrome.storage.sync.get(["myKey"], function(result){
-                                        console.log(result.value);
+                                // let c1 = await function () {
+                                //     return new Promise((resolve, reject) => {
+                                //         var obj = {};
+                                //         obj[name] = name;
+                                //         //console.log(obj);
+                                //         chrome.storage.sync.set(obj,function(){
+                                //             chrome.storage.sync.get(name, function(result){
+                                //                 console.log("store value:");
+                                //                 console.log(Object.values(result));
+                                //                 resolve();
+                                //             })
+                                // });
+                                //     });
+                                // }().then(response => {
+                                // }).catch(e => {
+                                //     console.log(e);
+                                // });
+                                var obj = {};
+                                obj[name] = name;
+                                //console.log(obj);
+                                chrome.storage.sync.set(obj,function(){
+                                    chrome.storage.sync.get(name, function(result){
+                                        console.log("store value:");
+                                        console.log(Object.values(result));
+                                        resolve(event);
                                     })
                                 });
-                                resolve(event);
                             }
                             else {
                                 reject();
@@ -196,6 +224,7 @@ async function create_event(event) {
                     // await new Promise(r => setTimeout(r, 500));
               }
               var total = events.length;
+              console.log("total events "+total);
               if (total==0) return;
               const batch = gapi.client.newBatch();
               //var num_events= 0;
@@ -221,30 +250,30 @@ async function create_event(event) {
     });
 }
 
-function checkKey(name) {
-    return chrome.storage.sync.get(name, function(result) {
-        console.log('Looking up: ' + name);
-        console.log('Found: ' + result);
-        });
-}
-function setKey(name) {
-    chrome.storage.sync.set({name: name}, async function() {
-        console.log('Logged into memory:' + name);
-    });
-}
-function checkSetKey(name, events_obj, event) {
-    return chrome.storage.sync.get(name, function(result) {
-        console.log('Looking up: ' + name);
-        console.log('Found: ' + result);
-        if (result==null){
-            chrome.storage.sync.set({name: name}, function() {
-                console.log('Logged into memory:' + name);
-                events_obj.events.push(event);
-            });
-        }
+// function checkKey(name) {
+//     return chrome.storage.sync.get(name, function(result) {
+//         console.log('Looking up: ' + name);
+//         console.log('Found: ' + result);
+//         });
+// }
+// function setKey(name) {
+//     chrome.storage.sync.set({name: name}, async function() {
+//         console.log('Logged into memory:' + name);
+//     });
+// }
+// function checkSetKey(name, events_obj, event) {
+//     return chrome.storage.sync.get(name, function(result) {
+//         console.log('Looking up: ' + name);
+//         console.log('Found: ' + result);
+//         if (result==null){
+//             chrome.storage.sync.set({name: name}, function() {
+//                 console.log('Logged into memory:' + name);
+//                 events_obj.events.push(event);
+//             });
+//         }
         
-    });
-}
+//     });
+// }
 
 // Please dont ask me how this works
 function getUTCEndFromComponents(year, month, date_input, hours, mins, ampm){
