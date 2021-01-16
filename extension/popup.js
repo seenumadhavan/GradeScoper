@@ -88,6 +88,7 @@ async function create_event(event) {
     //     });
     // });
     // return;
+    
     var loading = 0;
     document.getElementById("mytext").value = "loading 0%";
     
@@ -113,7 +114,8 @@ async function create_event(event) {
             //       events: []
             //   }
 
-              var events = [];
+              var newEvents = [];
+              var prevEvents = [];
               for (i = 0; i < arrayScraped[1].length; i++){
                 var name = arrayScraped[1][i][1];
                 if (name == null){
@@ -169,11 +171,11 @@ async function create_event(event) {
                             console.log(Object.entries(result));
                             if (Object.values(result).length == 0) {
                                 //console.log("Event not found: "+name);
-                                events.push(event);
+                                newEvents.push(event);
                                 console.log("pushed "+name);
-                                chrome.storage.sync.set({name: name},  function() {
-                                    console.log('Logged into memory:' + name);
-                                });
+                                // chrome.storage.sync.set({name: name},  function() {
+                                //     console.log('Logged into memory:' + name);
+                                // });
                                 // let c1 = await function () {
                                 //     return new Promise((resolve, reject) => {
                                 //         var obj = {};
@@ -223,23 +225,32 @@ async function create_event(event) {
                     // });
                     // await new Promise(r => setTimeout(r, 500));
               }
-              var total = events.length;
+              var total = newEvents.length;
               console.log("total events "+total);
               if (total==0) return;
               const batch = gapi.client.newBatch();
               //var num_events= 0;
-              events.map((r, j) => {
+              newEvents.map((r, j) => {
                   //num_events = num_events+1;
                   loading = loading +1;
                   document.getElementById("mytext").value = "loading"+(100*loading/total).toString()+"%";
                 batch.add(gapi.client.calendar.events.insert({
                   'calendarId': gradescoperCalID,
-                  'resource': events[j]
+                  'resource': newEvents[j]
                 }))
               })
               batch.then(function(){
                 console.log('all jobs now dynamically done!!!');
                 document.getElementById("mytext").value = "Done";
+                var popoutUrl = chrome.extension.getURL('popup.html');
+                    var openPopout = function() {
+                        chrome.windows.create({
+                            'url': popoutUrl,
+                            'type': 'popup',
+                            'width': 680,
+                            'height': 510
+                        })
+                    }();
                 //console.log(num_events);
               });
 
@@ -446,3 +457,4 @@ function getPrimaryCalendarTimezone() {
             function(err) { console.error("Execute error", err); });
     // console.log(typeof(response_raw));
 }
+
