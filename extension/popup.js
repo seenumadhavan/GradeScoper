@@ -107,7 +107,7 @@ async function create_event(event) {
                     console.log("invalid date");
                     continue;
                 }
-                console.log("End date "+endDate.toString());
+                //console.log("End date "+endDate.toString());
                 var event = {
                     'summary': name,
                     'description': 'A Gradescoped Assignment',
@@ -143,7 +143,46 @@ async function create_event(event) {
                 // }
 
                 //await checkSetKey(name, events_obj, event);
-                events.push(event);
+                let curr = await function () {
+                    return new Promise((resolve, reject) => {
+                        chrome.storage.sync.get(name, async function(result) {
+                            console.log("entered" + result.value);
+                            if (result.value == undefined) {
+                                //console.log("Event not found: "+name);
+                                events.push(event);
+                                console.log("pushed "+name);
+                                // chrome.storage.sync.set({name: name},  function() {
+                                //     console.log('Logged into memory:' + name);
+                                // });
+                                let c1 = await function () {
+                                    return new Promise((resolve, reject) => {
+                                        chrome.storage.sync.set({"myKey": "testPrefs"},function(){
+                                            chrome.storage.sync.get(["myKey"], function(result){
+                                                console.log(result.value);
+                                            })
+                                            resolve();
+                                        });
+                                    });
+                                }().then(response => {
+                                }).catch(e => {
+                                    console.log(e);
+                                });
+                                    chrome.storage.sync.set({"myKey": "testPrefs"},function(){
+                                    chrome.storage.sync.get(["myKey"], function(result){
+                                        console.log(result.value);
+                                    })
+                                });
+                                resolve(event);
+                            }
+                            else {
+                                reject();
+                            }
+                        });
+                    });
+                }().then(response => {
+                }).catch(e => {
+                    console.log(e);
+                });
                     
     
                     // var request = gapi.client.calendar.events.insert({
@@ -210,7 +249,7 @@ function checkSetKey(name, events_obj, event) {
 // Please dont ask me how this works
 function getUTCEndFromComponents(year, month, date_input, hours, mins, ampm){
     //month str, date int, hours int, mins int, ampm str
-    console.log("Month"+month);
+    //console.log("Month"+month);
 
     //var year = new Date().getFullYear;
     var date = new Date();
