@@ -32,7 +32,7 @@ function onGAPILoad() {
         // Don't pass client nor scope as these will init auth2, which we don't want
         apiKey: API_KEY,
         discoveryDocs: DISCOVERY_DOCS,
-    }).then(function () {
+    }).then(async function () {
 
         
         console.log('gapi initialized');
@@ -40,6 +40,20 @@ function onGAPILoad() {
         createEventButton.style.display = 'block';
         //scrapeButton.style.display = 'block';
         //scrapeButton.onclick = scrape_click;
+        var gradescoperCalID = await getGradescoperCalendar();
+        console.log(gradescoperCalID);
+        // gapi.client.calendar.events.list({
+        //     'calendarId': 'primary',
+        //     'timeMin': (new Date()).toISOString(),
+        //     'showDeleted': false,
+        //     'singleEvents': true,
+        //     'maxResults': 10,
+        //     'orderBy': 'startTime'
+        // }).then(function(response) {
+        //     var events = response.result.items;
+        //     console.log(events);
+            
+        // });
 
     }, function(error) {
         console.log('error', error)
@@ -73,16 +87,6 @@ async function scrape_click_noListen() {
 
 
 async function create_event(event) {
-    // var popoutUrl = chrome.extension.getURL('infoWindow.html');
-    // var openPopout = function() {
-    //     chrome.windows.create({
-    //         'url': popoutUrl,
-    //         'type': 'popup',
-    //         'width': 680,
-    //         'height': 510
-    //     })
-    // }();
-    // return;
     //var gradescoperCalID = await getGradescoperCalendar();
 
     // var obj = {};
